@@ -43,6 +43,4 @@
   <Project Path="../PsModules/RepoBuild/RepoBuild.pssproj" Type="f5034706-568f-408a-b7b3-4d38c6db8a32" Id="0c6a5f49-fc2a-4e62-8dd8-b31ade60ec76" />
   <Project Path="Ubiquity.NET.Versioning.Build.Tasks.UT/Ubiquity.NET.Versioning.Build.Tasks.UT.csproj" />
   <Project Path="Ubiquity.NET.Versioning.Build.Tasks/Ubiquity.NET.Versioning.Build.Tasks.csproj" />
-  <Project Path="Ubiquity.NET.Versioning.UT/Ubiquity.NET.Versioning.UT.csproj" Id="a60f8801-7550-468e-9821-a120497a99ea" />
-  <Project Path="Ubiquity.NET.Versioning/Ubiquity.NET.Versioning.csproj" />
 </Solution>
