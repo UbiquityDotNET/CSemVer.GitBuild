@@ -24,7 +24,6 @@
     <!--Everything in the versioning-lib sub-folder except the API folder as that contains generated files -->
     <None Include="versioning-lib/**" Exclude="versioning-lib/api/**" />
     <!-- Explicitly call out the non-generated files in the API folder-->
-    <None Include="versioning-lib/api/.gitignore" />
   </ItemGroup>
   <ItemGroup>
     <!--Everything in the build-tasks sub-folder except the API folder as that contains generated files -->

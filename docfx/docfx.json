@@ -1,18 +1,5 @@
 {
     "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
-    "metadata": [
-        {
-            "memberLayout":"separatePages",
-            "namespaceLayout":"nested",
-            "src": [
-                {
-                    "src": "../src/Ubiquity.NET.Versioning",
-                    "files": ["**.csproj"]
-                }
-            ],
-            "dest": "versioning-lib/api"
-        }
-    ],
     "build": {
         // xref YAML files that contain mappings from an XREF ID to the actual URL for the content in an external source
         "xref": [
@@ -26,17 +13,6 @@
                     "index.md",
                     "Attributions.md",
                     "toc.yml"
-                ]
-            },
-            {
-                // Versioning project additional content, Includes the generated metadata API folder
-                "files": [
-                    "versioning-lib/**.{md,yml}"
-                ],
-                // Exclude the namespace overwrites and XREF maps as they are listed explicitly elsewhere
-                "exclude": [
-                    "**/namespaces/**.md",
-                    "**/*-xref.yml"
                 ]
             },
             {
