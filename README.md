@@ -15,6 +15,16 @@ This repo includes support for versioning numbers. This support includes:
 ![PR/CI Work Flow Status](https://img.shields.io/github/actions/workflow/status/UbiquityDotNET/CSemVer.GitBuild/pr-build.yml?label=PR%2FCI%20Build%20Status)
 ![Release Work Flow Status](https://img.shields.io/github/actions/workflow/status/UbiquityDotNET/CSemVer.GitBuild/release-build.yml?label=Release%20Build%20Status)
 
+>[!IMPORTANT]
+> Version 5.0.4 and earlier have a [known bug](https://github.com/UbiquityDotNET/CSemVer.GitBuild/issues/64)
+> where they do not handle CI versioning correctly. CI builds do NOT have a correct base build value. They
+> are supposed to use a Patch+1 model but don't. The impact of this is limited to CI builds across releases.
+> In such cases ordering is incorrect. The normal case of CI build to build (with the same release as the base)
+> are ordered correctly. That is, for any given release the CI builds order correctly when compared to another
+> CI build with the same base version. As soon as the base version is different (previous or next) the CI build
+> ordering is incorrect. Thus, the impact of the bug is reduced to ONLY CI builds. Work is pending to resolve
+> this and this message will be removed as part of any such fix.
+
 ## Overview
 Officially, NuGet Packages use a SemVer 2.0 (see http://semver.org).
 However, SemVer 2.0 doesn't consider or account for publicly available CI builds.
