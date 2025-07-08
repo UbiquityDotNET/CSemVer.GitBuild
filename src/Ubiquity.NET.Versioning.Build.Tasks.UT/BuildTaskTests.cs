@@ -52,8 +52,8 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT
             // is not possible to know 'a priori' what the value will be..., additionally, the
             // CiBuildName is dependent on the environment. Other, tests validate the behavior of
             // those with an explicit setting...
-            string expectedFullBuildNumber = $"20.1.4-alpha.ci.{props.CiBuildIndex}.{props.CiBuildName}";
-            string expectedShortNumber = $"20.1.4-a.ci.{props.CiBuildIndex}.{props.CiBuildName}";
+            string expectedFullBuildNumber = $"20.1.5-alpha.ci.{props.CiBuildIndex}.{props.CiBuildName}";
+            string expectedShortNumber = $"20.1.5-a.ci.{props.CiBuildIndex}.{props.CiBuildName}";
             string expectedFileVersion = "5.44854.3875.59947"; // CI build
 
             Assert.IsNotNull(props.BuildMajor, "should have a value set for 'BuildMajor'");
@@ -121,9 +121,9 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT
             Assert.IsTrue(buildResults.Success);
 
             // v20.1.5 => 5.44854.3880.52268 [see: https://csemver.org/playground/site/#/]
-            // NOTE: CI build is +1 (FileVersionRevision)!
-            string expectedFullBuildNumber = $"20.1.5--ci.ABCDEF12.ZZZ";
-            string expectedShortNumber = $"20.1.5--ci.ABCDEF12.ZZZ";
+            // NOTE: CI build is Patch+1 for the string form
+            // and for a FileVersion, it is baseBuild + CI bit.
+            string expectedFullBuildNumber = $"20.1.6--ci.ABCDEF12.ZZZ";
             string expectedFileVersion = "5.44854.3880.52269";
 
             Assert.IsNotNull(props.BuildMajor);
@@ -144,7 +144,7 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT
             Assert.AreEqual(0, props.PreReleaseFix.Value);
 
             Assert.AreEqual(expectedFullBuildNumber, props.FullBuildNumber);
-            Assert.AreEqual(expectedShortNumber, props.PackageVersion);
+            Assert.AreEqual(expectedFullBuildNumber, props.PackageVersion);
 
             // Test for expected global properties (Should not change values)
             Assert.AreEqual(buildTime, props.BuildTime);
@@ -206,8 +206,7 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT
             // is not possible to know 'a priori' what the value will be..., additionally, the
             // CiBuildName is dependent on the environment. Other, tests validate the behavior of
             // those with an explicit setting...
-            string expectedFullBuildNumber = $"20.1.5-delta.0.1.ci.{expectedIndex}.QRP";
-            string expectedShortNumber = $"20.1.5-d.0.1.ci.{expectedIndex}.QRP";
+            string expectedFullBuildNumber = $"20.1.6-delta.0.1.ci.{expectedIndex}.QRP";
             string expectedFileVersion = "5.44854.3878.63343"; // CI Build (+1)
 
             Assert.IsNotNull(props.BuildMajor, "should have a value set for 'BuildMajor'");
@@ -290,8 +289,7 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT
             // is not possible to know 'a priori' what the value will be..., additionally, the
             // CiBuildName is dependent on the environment. Other, tests validate the behavior of
             // those with an explicit setting...
-            string expectedFullBuildNumber = $"20.1.5-delta.1.ci.{expectedIndex}.QRP";
-            string expectedShortNumber = $"20.1.5-d01.ci.{expectedIndex}.QRP";
+            string expectedFullBuildNumber = $"20.1.6-delta.1.ci.{expectedIndex}.QRP";
             string expectedFileVersion = "5.44854.3878.63541"; // CI Build (+1)
 
             Assert.IsNotNull(props.BuildMajor, "should have a value set for 'BuildMajor'");
@@ -357,8 +355,8 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT
                 [PropertyNames.BuildPatch] = "4",
             };
 
-            string expectedFullBuildNumber = "20.1.4";
-            string expectedShortNumber = "20.1.4";
+            // CI Builds use a pre-release of the "next" release (POST build version number)
+            string expectedFullBuildNumber = isCiBuild ? "20.1.5" : "20.1.4";
 
             if (isPreRelease)
             {
@@ -366,7 +364,6 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT
                 globalProperties[PropertyNames.PreReleaseNumber] = "1";
                 globalProperties[PropertyNames.PreReleaseFix] = "0";
                 expectedFullBuildNumber += "-delta.1";
-                expectedShortNumber += "-d01";
             }
 
             if (isCiBuild)
@@ -375,7 +372,6 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT
                 globalProperties[PropertyNames.CiBuildName] = "QRP"; // Intentionally, not a standard value
                 string ciSuffix = isPreRelease ? ".ci.MyIndex.QRP" : "--ci.MyIndex.QRP";
                 expectedFullBuildNumber += ciSuffix;
-                expectedShortNumber += ciSuffix;
             }
             else
             {

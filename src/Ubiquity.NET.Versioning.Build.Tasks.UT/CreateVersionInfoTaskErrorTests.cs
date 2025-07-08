@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 using Microsoft.Build.Evaluation;
@@ -388,8 +389,8 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT
                 [PropertyNames.BuildMajor] = "1",
                 [PropertyNames.BuildMinor] = "2",
                 [PropertyNames.BuildPatch] = "3",
-                [PropertyNames.CiBuildIndex] = "01234ABC",
-                [PropertyNames.CiBuildName] = "01234_ABC"
+                [PropertyNames.CiBuildIndex] = "FOO", // valid, but of questionable value. 8^)
+                [PropertyNames.CiBuildName] = "01234_ABC" // '_' is not a valid char!
             };
 
             using var collection = new ProjectCollection(globalProperties);
@@ -399,5 +400,31 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT
             var errors = buildResults.Output.ErrorEvents.Where(evt=>evt.Code == "CSM108").ToList();
             Assert.AreEqual( 1, errors.Count );
         }
+
+        [TestMethod]
+        public void CSM109_BaseBuild_already_at_max_fails( )
+        {
+            var globalProperties = new Dictionary<string, string>
+            {
+                [PropertyNames.BuildMajor] = MaxMajor.ToString(CultureInfo.InvariantCulture),
+                [PropertyNames.BuildMinor] = MaxMinor.ToString(CultureInfo.InvariantCulture),
+                [PropertyNames.BuildPatch] = MaxPatch.ToString(CultureInfo.InvariantCulture),
+                [PropertyNames.CiBuildIndex] = "ABCDEF",
+                [PropertyNames.CiBuildName] = "01234-ABC" // '-' is valid!
+            };
+
+            using var collection = new ProjectCollection(globalProperties);
+            using var fullResults = Context.CreateTestProjectAndInvokeTestedPackage("net8.0", collection);
+            var (buildResults, props) = fullResults;
+            Assert.IsFalse( buildResults.Success );
+            var errors = buildResults.Output.ErrorEvents.Where(evt=>evt.Code == "CSM109").ToList();
+            Assert.AreEqual( 1, errors.Count );
+        }
+
+        private const int MaxMajor = 99999;
+        private const int MaxMinor = 49999;
+        private const int MaxPatch = 9999;
+
+        //private const byte MaxPrereleaseNumberOrFix = 99;
     }
 }
