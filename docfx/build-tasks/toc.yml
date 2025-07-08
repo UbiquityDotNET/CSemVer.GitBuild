@@ -1,3 +1,5 @@
 # TOC (Left nav) this folder
 - name: Overview
   href: index.md
+- name: Understanding CI builds
+  uid: understanding-ci-builds

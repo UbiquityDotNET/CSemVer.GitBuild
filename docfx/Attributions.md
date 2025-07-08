@@ -8,6 +8,10 @@ Like almost any OSS project, this project relies on the work of others.
       Copyright :copyright: 2020 Twitter, Inc and other contributors. The graphics are licensed under
       [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 * MSBUILD task support from the [MSBUILD](https://github.com/dotnet/msbuild) project
+* [PolySharp](https://github.com/Sergio0694/PolySharp) To support poly-filling for down-level runtimes
+
+And, of course, the [SemVer](https://SemVer.org) and [CSemVer](https://csemver.org) specs as this project
+implements support for them.
 
 ### Non-Shipping  
 While not included in the shipping packages the following components are used in producing this

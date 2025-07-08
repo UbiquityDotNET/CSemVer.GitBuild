@@ -199,15 +199,47 @@ class CSemVer
             throw 'CiBuildName is required if CiBuildIndex is provided';
         }
 
+        # For a CI build the OrderedVersion value is that of the BASE build
         $this.OrderedVersion = [CSemVer]::GetOrderedVersion($this.Major, $this.Minor, $this.Patch, $this.PreReleaseVersion)
         $fileVer64 = $this.OrderedVersion -shl 1
+
         # If this is a CI build include that in the file version
+        # AND increment the ordered version so that it is patch+1
         if($this.CiBuildIndex -and $this.CiBuildName)
         {
+            $this.OrderedVersion = [CSemVer]::MakePatchPlus1($this.OrderedVersion)
+            $this.UpdateFromOrderedVersion($this.OrderedVersion)
             $fileVer64 += 1;
         }
 
         $this.FileVersion = [CSemVer]::ConvertToVersion($fileVer64)
+    }
+
+    hidden UpdateFromOrderedVersion([long]$orderedVersion)
+    {
+        [ulong] $MulNum = 100;
+        [ulong] $MulName = $MulNum * 100;
+        [ulong] $MulPatch = ($MulName * 8) + 1;
+        [ulong] $MulMinor = $MulPatch * 10000;
+        [ulong] $MulMajor = $MulMinor * 50000;
+
+        # This effectively reverses the math used in computing the ordered version.
+        $accumulator = [UInt64]$orderedVersion;
+        $preRelPart = $accumulator % $MulPatch;
+
+        # skipping pre-release info as it is used AS-IS
+        if($preRelPart -eq 0)
+        {
+            $accumulator -= $MulPatch;
+        }
+
+        $this.Major = [Int32]($accumulator / $MulMajor);
+        $accumulator %= $MulMajor;
+
+        $this.Minor = [Int32]($accumulator / $MulMinor);
+        $accumulator %= $MulMinor;
+
+        $this.Patch = [Int32]($accumulator / $MulPatch);
     }
 
     [string] ToString([bool] $includeMetadata)
@@ -237,6 +269,14 @@ class CSemVer
     [string] ToString()
     {
         return $this.ToString($true, $false);
+    }
+
+    hidden static [ulong] MakePatchPlus1($orderedVersion)
+    {
+        [ulong] $MulNum = 100;
+        [ulong] $MulName = $MulNum * 100;
+        [ulong] $MulPatch = ($MulName * 8) + 1;
+        return $orderedVersion + $MulPatch;
     }
 
     hidden static [ulong] GetOrderedVersion($Major, $Minor, $Patch, [PreReleaseVersion] $PreReleaseVersion)
@@ -388,5 +428,3 @@ finally
     Pop-Location
     $env:Path = $oldPath
 }
-
-Write-Information 'Done build'

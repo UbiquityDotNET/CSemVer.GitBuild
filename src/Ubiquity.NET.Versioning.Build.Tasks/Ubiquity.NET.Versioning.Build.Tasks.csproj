@@ -43,7 +43,7 @@
     // See: https://natemcmaster.com/blog/2017/11/11/msbuild-task-with-dependencies/
     //
     // Note that there is a problem with the recommendation Nate makes in that a console tool
-    // has additional dependency problems with the runtime identifier and or the framework
+    // has additional dependency concerns with the runtime identifier and or the framework
     // runtime needed to run it. If it's .NET or something else the supporting runtime and
     // the RID version is needed to execute it. So this just builds a task that is constrained
     // only by the requirements of MSBUILD itself.
@@ -51,11 +51,15 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Build.Framework" PrivateAssets="All" />
         <PackageReference Include="Microsoft.Build.Utilities.Core" PrivateAssets="All" />
+        <PackageReference Include="PolySharp">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="PackageReadMe.md" PackagePath="ReadMe.md"/>
-        <Content Include="build\**" PackagePath="build"/>
-        <Content Include="buildMultiTargeting\**" PackagePath="buildMultiTargeting"/>
+        <Content Include="PackageReadMe.md" PackagePath="ReadMe.md" />
+        <Content Include="build\**" PackagePath="build" />
+        <Content Include="buildMultiTargeting\**" PackagePath="buildMultiTargeting" />
     </ItemGroup>
 </Project>

@@ -22,6 +22,8 @@ least surprise while conforming to the syntax of CSemVer and CSemVer-CI for vers
 > additional changes (that might remove things). CI builds are, by definition NOT stable
 > and consumers cannot rely on them for predictions of future stability. A given CI build
 > may even represent an abandoned approach that never becomes a release!
+>
+> See the full [article](xref:understanding-ci-builds) discussing CI builds for more details
 
 ---
 [Attributions](Attributions.md)
