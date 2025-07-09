@@ -24,6 +24,9 @@ This repo includes support for versioning numbers. This support includes:
 > CI build with the same base version. As soon as the base version is different (previous or next) the CI build
 > ordering is incorrect. Thus, the impact of the bug is reduced to ONLY CI builds. Work is pending to resolve
 > this and this message will be removed as part of any such fix.
+>
+> This issue is resolved with v5.0.5-alpha. Once that is formally released (past prerelease stage) this entire
+> notice should be removed.
 
 ## Overview
 Officially, NuGet Packages use a SemVer 2.0 (see http://semver.org).
