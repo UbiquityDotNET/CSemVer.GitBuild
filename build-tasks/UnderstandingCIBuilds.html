@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Understanding Continuous Integration (CI) Builds | Ubiquity.NET.Versioning </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Understanding Continuous Integration (CI) Builds | Ubiquity.NET.Versioning ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/UbiquityDotNET/CSemVer.GitBuild/blob/develop/docfx/build-tasks/UnderstandingCIBuilds.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../favicon-32x32.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+        </div>
+
+        <article data-uid="understanding-ci-builds">
+<h1 id="understanding-continuous-integration-ci-builds">Understanding Continuous Integration (CI) Builds</h1>
+
+<p>The use of a version specific to CI builds is unique to the Constrained Semantic
+Version spec, in particular the CSemVer-CI support. These versions are NOT compatible
+with a CSemVer but are compatible with a SemVer. If that's not confusing enough the
+way in which they are constrained makes things a LOT more complicated. This task and
+the <a href="https://www.nuget.org/packages/Ubiquity.NET.Versioning">Ubiquity.NET.Versioning</a>
+library BOTH got the behavior wrong initially! This article will hopefully make sense
+out of things...</p>
+<h2 id="examples">Examples</h2>
+<p>Hopefully examples will make things more clear:</p>
+<ol>
+<li><code>v5.0.4--ci.123456.ZZZ</code>
+<ul>
+<li>This is a CI build based on a release <code>v5.0.3</code>
+<ul>
+<li>That is, it is ordered AFTER a release of <code>v5.0.3</code></li>
+</ul>
+</li>
+<li>It is also a SemVer 'pre-release' and therefore ordered BEFORE
+<code>v5.0.4</code>.
+<ul>
+<li>Thus this CI build is ordered BETWEEN the previously released <code>v5.0.3</code> and
+the as of yet unreleased <code>v5.0.4</code>.</li>
+</ul>
+</li>
+<li>Using this task the <code>ZZZ</code> indicates this is a developer local build. No
+guarantees of uniqueness are provided for such versions across machines.
+<ul>
+<li>It is possible for two developers to achieve the same build version for two
+completely distinct builds.
+<ul>
+<li>Though in practical terms this is a very unlikely statistical
+probability.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>'v5.0.4-beta.0.1.ci.123456.ZZZ`
+<ul>
+<li>This is a CI Build based on a previously released &quot;pre-release&quot; version
+<code>v5.0.3-alpha.0.1</code></li>
+<li>As with the previous example this is ordered AFTER the release it is based on
+and BEFORE the Patch+1 version (<code>v5.0.4-beta.0.1</code>).</li>
+</ul>
+</li>
+</ol>
+<h2 id="lifetime-scope-of-a-ci-build">lifetime scope of a CI Build</h2>
+<p>The lifetime of a CI build is generally very short and once a version is released
+all CIs that led up to that release are essentially moot.</p>
+<h2 id="ci-versions-are-post-release-based">CI versions are POST-RELEASE based</h2>
+<p>CI versioning falls into one of two categories:</p>
+<ol>
+<li>Never had a release to base anything on
+<ol>
+<li>Intermediate builds while developing the very first release of a product.</li>
+</ol>
+</li>
+<li>A build that occurs <em><strong>AFTER</strong></em> something was released, but <em><strong>BEFORE</strong></em> the
+next formal release. Such builds usually include:
+<ol>
+<li>Local Developer Builds</li>
+<li>Pull Request builds (Automated &quot;buddy&quot; builds)</li>
+<li>&quot;CI&quot; builds
+<ol>
+<li>Formal builds of the code base either from any PR or on a schedule (usually
+nightly builds)</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<p>For CSemVer-CI, which are based on SemVer, the pre-release syntax is all that is
+available to indicate the status of a CI build. Additionally, a CSemVer[-CI] supports
+representation as an &quot;ordered&quot; version number OR as a File Version Quad. The file
+version quad keeps things 'interesting'...</p>
+<h3 id="string-forms-of-versions">String forms of versions</h3>
+<p>As a string a CI build is represented with pre-release component of 'ci' or '-ci'. The
+latter is used if the base version already includes pre-release data (The 'double dash'
+trick)</p>
+<p>`5.0.5--ci.BuildIndex.BuildName'</p>
+<h4 id="as-a-semver">As a SemVer</h4>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>Major portion of the version</td>
+</tr>
+<tr>
+<td>0</td>
+<td>Minor portion of the version</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Patch portion of the version</td>
+</tr>
+<tr>
+<td>'ci.BuildIndex.BuildName'</td>
+<td>pre-release data indicating a CI build where the version is patch+1</td>
+</tr>
+</tbody>
+</table>
+<p>Since this is a pre-release it is ordered BEFORE an actual release of (5.0.5) and
+AFTER any release of (5.0.4).</p>
+<h4 id="as-a-csemver-ci">As a CSemVer-CI</h4>
+<p>As a CSemVer-CI that is interpreted a bit differently than you might expect, in
+particular the 'Major.Minor.Patch' are what is known as the &quot;Patch+1&quot; form. That is
+the <code>base build</code> version for this CSemVer-CI version is v5.0.4! That is what is used
+as the defining value of a build as it isn't known what the actual release version
+will be (it hasn't released yet!).</p>
+<p>SemVer has rules regarding compatibilities with respect to changes in elements of a
+version. Thus, any versioning strategy that follows those rules does NOT have a fixed
+(next version). So CSemVer-CI uses a POST release strategy where the
+<code>&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;</code> is actually <code>&lt;major&gt;.&lt;minor&gt;.&lt;patch+1&gt;</code> to guarantee it is
+ordered AFTER the release it is based on but BEFORE the next possible release. The
+actual release value may use an even greater value, but CSemVer-CI doesn't care.</p>
+<p>The CSemVer-CI spec is silent on the point of what happens if the base build
+version patch is already <code>9999</code> (The max allowed value). Does it roll over to
+0 and +1 to minor? While that does maintain ordering it pushes the boundaries
+of the meaning of the version numbers. Though it is a rather common scenario for
+a build to require a major version update when only some small portion of things
+is actually incompatible and the rest is largely backwards compatible. It just doesn't
+guarantee it anymore.</p>
+<p>This task assumes it is proper to roll over into the next form. (In fact it relies
+on the ordered integral form of the version and increments that, until it reaches the
+maximum)</p>
+<h3 id="ordered-version">Ordered Version</h3>
+<p>Ordered versions are a concept unique to Constrained Semantic versions. The constraints
+applied to a SemVer allow creation of an integral value for all versions, except CI
+builds. Ignoring CI builds for the moment, the ordered number is computed from the
+values of the various parts of a version as they are constrained by the CSemVer spec.
+The math involved is not important for this discussion. Just that each Constrained
+Version is representable as a distinct integral value (63 bits actually). A CSemVer-CI
+build has two elements the base build and the additional 'BuildIndex' and 'BuildName'
+components. This means the string, File version and ordered version numbers are
+confusingly different for a CI build. The ordered version number does NOT account for
+CI in any way. It is ONLY able to convert to/from a CSemVer. Thus, a CSemVer-CI has
+an ambiguous conversion. Should it convert the Patch+1 form in a string or the
+base build number?.</p>
+<h3 id="file-version-quad-and-uint64">File Version Quad and UINT64</h3>
+<p>A file Version quad is a data structure that is blittable as an unsigned 64 bit value.
+Each such value is broken down into four fields (thus the 'quad' in the common naming)
+that are 16 bits each (unsigned). These versions are common in Windows platforms as
+that is the form used in resource file versioning. (Though this form is used in other
+cases on other platforms as well.) Such a value is really the ordered version number
+shifted left by one bit and the LSB used to indicate a CI build with odd numbered
+values to represent a CI build. Thus, a File Version of a CI build is derived from
+the base version of the CSemVer-CI. The ordering of such values is the same as an
+integral conversion. (or, most likely, a simple re-interpret style cast to an unsigned
+64 bit value). The LSB reserved to indicate a CI ensures that a CI file Version is
+ordered AFTER a non-CI File version for the same base build. This is the most
+confusing and subtle aspect of the versioning and where this task an related library
+went wrong in early releases.</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>To be crystal clear, the FILEVERSION for a CI build comes from the <em><strong>base build</strong></em>
+version as it includes a bit that, when set, indicates a CI build, but also a
+greater integral value. Thus, ordering for a CI build as a POST release version is
+built into this representation already.</p>
+<p>The <em><strong>string</strong></em> form of a version uses the <code>Patch+1</code> version to maintain proper
+ordering following the rules defined by SemVer. That is the FileVersion and string
+forms will use different versions at first glance. The string form requires some
+interpretation to fully understand the meaning, while still retaining the desired
+ordering based on SemVer defined rules.</p>
+</div>
+<p>File Version QUAD (Bit 63 is the MSB and bit 0 is the LSB)<sup><a href="#footnote_1">1</a></sup></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bits 48-63</td>
+<td>Major</td>
+<td>Major portion of a build</td>
+</tr>
+<tr>
+<td>Bits 32-47</td>
+<td>Minor</td>
+<td>Minor portion of a build</td>
+</tr>
+<tr>
+<td>Bits 16-31</td>
+<td>Build</td>
+<td>Build number for a build</td>
+</tr>
+<tr>
+<td>Bits 1-15</td>
+<td>Revision</td>
+<td>Revision of the build</td>
+</tr>
+<tr>
+<td>Bit 0</td>
+<td>CI Build</td>
+<td>normally incorporated into the &quot;revision&quot; (1 == CI Build, 0 == release build)</td>
+</tr>
+</tbody>
+</table>
+<p>Bits 1-63 are the same as the ordered version of the base build for a CI build and
+the same as the ordered version of a release build.</p>
+<hr>
+<p><sup><a id="footnote_1">1</a></sup> Endianess of the platform does not matter as the bits are numbered as MSB-&gt;LSB
+and the actual byte layout is dependent on the target platform even though the bits
+are not. It is NOT safe to transfer a FileVersion (or Ordered version) as in integral
+value without considering the endianess of the source, target and transport mechanism,
+all of which are out of scope for this library and the CSemVer spec in general.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/UbiquityDotNET/CSemVer.GitBuild/blob/develop/docfx/build-tasks/UnderstandingCIBuilds.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright (C) 2017-2025, Ubiquity.NET Contributors
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

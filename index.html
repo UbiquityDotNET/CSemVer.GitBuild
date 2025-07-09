@@ -2,9 +2,9 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Ubiquity.NET.Versioning | Ubiquity.NET.Versioning </title>
+      <title>Ubiquity.NET.Versioning.Tasks | Ubiquity.NET.Versioning </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Ubiquity.NET.Versioning | Ubiquity.NET.Versioning ">
+      <meta name="title" content="Ubiquity.NET.Versioning.Tasks | Ubiquity.NET.Versioning ">
       
       
       <link rel="icon" href="favicon.ico">
@@ -66,11 +66,11 @@
         </div>
 
         <article data-uid="">
-<h1 id="ubiquitynetversioning">Ubiquity.NET.Versioning</h1>
+<h1 id="ubiquitynetversioningtasks">Ubiquity.NET.Versioning.Tasks</h1>
 
-<p><code>Ubiquity.NET.Versioning*</code> family of libraries provides support for a number of scenarios
-but the primary focus is automated build versioning that embraces the principal of least surprise
-while conforming to the syntax of CSemVer and CSemVer-CI</p>
+<p><code>Ubiquity.NET.Versioning.Tasks</code> library provides support for automated build scenarios
+with the primary focus is automated build versioning that embraces the principal of
+least surprise while conforming to the syntax of CSemVer and CSemVer-CI for versioning.</p>
 <h2 id="the-libraries-in-this-repository">The Libraries in this repository</h2>
 <table>
 <thead>
@@ -80,10 +80,6 @@ while conforming to the syntax of CSemVer and CSemVer-CI</p>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td><a href="versioning-lib/index.html">Ubiquity.NET.Versioning</a></td>
-<td>This library contains support for use of CSemVer at runtime</td>
-</tr>
 <tr>
 <td><a href="build-tasks/index.html">Ubiquity.NET.Versioning.Build.Tasks</a></td>
 <td>This library contains support for automated versioning at BUILD time</td>
@@ -96,13 +92,14 @@ while conforming to the syntax of CSemVer and CSemVer-CI</p>
 CSemVer-CI. A CI Build is either an initial build of an unreleased version with
 [Major.Minor.Patch] == [0.0.0]. Or, it is based on the previously released version and
 is [Major.Minor.Patch+1]. That is, a CI build is ordered <em><strong>BEFORE</strong></em> all release builds,
-or it is ordered <em><strong>AFTER</strong></em> the <em><strong>specific</strong></em> release it is based on! In particular a
-CI build version does <em><strong>NOT</strong></em> indicate what it will become when it is finally released,
-but what release it was based on (If any). To simplify that, for clarity, a CI build
-contains everything in the release it was based on and additional changes (that might
-remove things). CI builds are, by definition NOT stable and consumers cannot rely on
-them for predictions of future stability. A given CI build may even represent an
-abandoned approach that never becomes a release!</p>
+or it is ordered <em><strong>AFTER</strong></em> the <em><strong>specific</strong></em> release it is based on!</p>
+<p>In particular a CI build version does <em><strong>NOT</strong></em> indicate what it will become when it is
+finally released/ It ONLY indicates what release it was based on (If any). To simplify
+that, for clarity, a CI build contains everything in the release it was based on and
+additional changes (that might remove things). CI builds are, by definition NOT stable
+and consumers cannot rely on them for predictions of future stability. A given CI build
+may even represent an abandoned approach that never becomes a release!</p>
+<p>See the full <a class="xref" href="build-tasks/UnderstandingCIBuilds.html">article</a> discussing CI builds for more details</p>
 </div>
 <hr>
 <p><a href="Attributions.html">Attributions</a></p>
