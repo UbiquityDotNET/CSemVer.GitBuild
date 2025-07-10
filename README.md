@@ -1,4 +1,4 @@
-# Ubiquity.NET.Versioning
+# Ubiquity.NET.Versioning.Build.Tasks
 This repo includes support for versioning numbers. This support includes:
 1) Automated Constrained Semantic Versioning ([CSemVer](https:/csemver.org)) for MSBuild
    projects.
