@@ -51,6 +51,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Build.Framework" PrivateAssets="All" />
         <PackageReference Include="Microsoft.Build.Utilities.Core" PrivateAssets="All" />
+        <!-- NOTE: This uses source generated "pollyfill" only, and does NOT trigger any dependencies-->
         <PackageReference Include="PolySharp">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

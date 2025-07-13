@@ -7,10 +7,10 @@
 using System;
 using System.Numerics;
 
-namespace Ubiquity.NET.Versioning.Build.Tasks.UT
+namespace Ubiquity.NET.Versioning.Build.Tasks.UT.Support
 {
     /// <summary>File version QUAD used for testing</summary>
-    /// <para>This is a clone of the code in the `Ubiquity.NET.Versioning`. Cloning this for the tests, means
+    /// <para>This is a clone (and subset) of the code in the `Ubiquity.NET.Versioning`. Cloning this for the tests, means
     /// they are independent of the versioning library, which makes that library a candidate for isolation in
     /// a different repo/build that depends on the TASK package for generation of versions</para>
     internal readonly record struct FileVersionQuad( ushort Major, ushort Minor, ushort Build, ushort Revision )

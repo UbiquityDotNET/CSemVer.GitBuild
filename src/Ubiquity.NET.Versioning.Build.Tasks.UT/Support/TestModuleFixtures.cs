@@ -12,7 +12,7 @@ using System.IO;
 using Microsoft.Build.Utilities.ProjectCreation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Ubiquity.NET.Versioning.Build.Tasks.UT
+namespace Ubiquity.NET.Versioning.Build.Tasks.UT.Support
 {
     // Provides common location for one time initialization for all tests in this assembly
     // Doing the package repo construction here, allows tests to run in parallel without

@@ -13,6 +13,8 @@ using System.Xml.Linq;
 using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using Ubiquity.NET.Versioning.Build.Tasks.UT.Support;
+
 namespace Ubiquity.NET.Versioning.Build.Tasks.UT
 {
     [TestClass]

@@ -4,7 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Ubiquity.NET.Versioning.Build.Tasks.UT
+namespace Ubiquity.NET.Versioning.Build.Tasks.UT.Support
 {
     internal static class EnvVarNames
     {

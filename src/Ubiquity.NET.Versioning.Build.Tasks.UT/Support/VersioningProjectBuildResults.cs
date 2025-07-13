@@ -6,7 +6,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Ubiquity.NET.Versioning.Build.Tasks.UT
+namespace Ubiquity.NET.Versioning.Build.Tasks.UT.Support
 {
     [SuppressMessage( "StyleCop.CSharp.DocumentationRules", "SA1649:File name should match first type name", Justification = "Simple record used here" )]
     internal readonly ref struct VersioningProjectBuildResults

@@ -12,7 +12,7 @@ using System.Xml.Linq;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Utilities.ProjectCreation;
 
-namespace Ubiquity.NET.Versioning.Build.Tasks.UT
+namespace Ubiquity.NET.Versioning.Build.Tasks.UT.Support
 {
     internal static class ProjectCreatorLibraryExtensions
     {

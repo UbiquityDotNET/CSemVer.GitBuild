@@ -95,7 +95,7 @@ namespace Ubiquity.NET.Versioning.Build.Tasks
 
                 SetFileVersion( preRelIndex );
 
-                CSemVer = CreateSemVerString( preRelIndex );
+                CSemVer = CreateSemVerString( preRelIndex, alwaysIncludeZero: IsCIBuild );
                 if(string.IsNullOrWhiteSpace( CSemVer ))
                 {
                     return false;
@@ -118,15 +118,15 @@ namespace Ubiquity.NET.Versioning.Build.Tasks
 
         /// <summary>Creates a formatted CSemver from the properties of this instance</summary>
         /// <param name="preRelIndex">Numeric form of the build index [(-1)-7] where -1 indicates not a pre-release</param>
-        /// <param name="includeMetadata">Flag to indicate if the metadata is included</param>
         /// <param name="alwaysIncludeZero">Flag to indicate if a 0 pre-release is ALWAYs included [see remarks]</param>
+        /// <param name="includeMetadata">Flag to indicate if the metadata is included</param>
         /// <returns>Formatted CSemVer string</returns>
         /// <remarks>
         /// <para>The <paramref name="alwaysIncludeZero"/> is for legacy behavior and should generally be left at the default.
         /// In the current version based on CSemVer v1.0.0-rc.1 the behavior is the same as for a full version. (The Number
         /// is omitted unless it is > 0 OR Fix >0).</para>
         /// </remarks>
-        private string? CreateSemVerString( int preRelIndex, bool includeMetadata = true, bool alwaysIncludeZero = false )
+        private string? CreateSemVerString( int preRelIndex, bool alwaysIncludeZero = false, bool includeMetadata = true )
         {
             if(IsCIBuild)
             {

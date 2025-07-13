@@ -8,7 +8,7 @@ using System;
 
 using Microsoft.Build.Execution;
 
-namespace Ubiquity.NET.Versioning.Build.Tasks.UT
+namespace Ubiquity.NET.Versioning.Build.Tasks.UT.Support
 {
     /// <summary>Captures all properties for the build task</summary>
     /// <remarks>
@@ -24,10 +24,10 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT
 
             // Manually or from Ubiquity.NET.Versioning.Build.Tasks.props
             BuildTime = inst.GetPropertyValue(PropertyNames.BuildTime);
-            CiBuildName = inst.GetPropertyValue(PropertyNames.CiBuildName);
+            CiBuildName = inst.GetOptionalProperty(PropertyNames.CiBuildName);
 
             // from Ubiquity.NET.Versioning.Build.Tasks.targets/GetRepositoryInfo/GetBuildIndexFromTime task
-            CiBuildIndex = inst.GetPropertyValue(PropertyNames.CiBuildIndex);
+            CiBuildIndex = inst.GetOptionalProperty(PropertyNames.CiBuildIndex);
 
             // Either manually or from Ubiquity.NET.Versioning.Build.Tasks.targets/GetRepositoryInfo/ParseBuildVersionXml task
             BuildMajor = inst.GetPropertyAs<ushort>(PropertyNames.BuildMajor);
