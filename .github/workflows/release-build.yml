@@ -4,6 +4,7 @@ permissions:
   pages: write
   packages: write
   actions: read
+
 defaults:
   run:
     shell: pwsh
