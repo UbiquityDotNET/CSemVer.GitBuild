@@ -32,6 +32,14 @@ Hopefully examples will make things more clear:
     * As with the previous example this is ordered AFTER the release it is based on
       and BEFORE the Patch+1 version (`v5.0.4-beta.0.1`).
 
+>[!NOTE]
+> As [[BUG] - CI version string formatting does not ALWAYS include pre-release information for a pre-release](https://github.com/UbiquityDotNET/CSemVer.GitBuild/issues/72)
+> points out the formatting of pre-release version numbers is different in CSemVer-CI. In a CI
+> version the `Number` and `Fix` values are ALWAYS included, even if `0`. In a CSemVer
+> things are more complex. In such a case, the `Number` and `Fix` are NOT shown if 0.
+> ***Unless*** the `Number` is `0` AND `Fix > 0` in that case the `Number` is shown
+> as a zero and the `Fix` is shown as it's non-zero value.
+
 ## lifetime scope of a CI Build
 The lifetime of a CI build is generally very short and once a version is released
 all CIs that led up to that release are essentially moot.
@@ -99,18 +107,18 @@ on the ordered integral form of the version and increments that, until it reache
 maximum)
 
 ### Ordered Version
-Ordered versions are a concept unique to Constrained Semantic versions. The constraints
-applied to a SemVer allow creation of an integral value for all versions, except CI
-builds. Ignoring CI builds for the moment, the ordered number is computed from the
-values of the various parts of a version as they are constrained by the CSemVer spec.
-The math involved is not important for this discussion. Just that each Constrained
-Version is representable as a distinct integral value (63 bits actually). A CSemVer-CI
-build has two elements the base build and the additional 'BuildIndex' and 'BuildName'
-components. This means the string, File version and ordered version numbers are
-confusingly different for a CI build. The ordered version number does NOT account for
-CI in any way. It is ONLY able to convert to/from a CSemVer. Thus, a CSemVer-CI has
-an ambiguous conversion. Should it convert the Patch+1 form in a string or the
-base build number?.
+Ordered versions are a concept unique to Constrained Semantic versions. The
+constraints applied to a SemVer allow creation of an integral value for all versions,
+except CI builds. Ignoring CI builds for the moment, the ordered number is computed
+from the values of the various parts of a version as they are constrained by the
+CSemVer spec. The math involved is not important for this discussion. Just that each
+Constrained Version is representable as a distinct integral value (63 bits actually).
+A CSemVer-CI build has two elements the base build and the additional 'BuildIndex' and
+'BuildName' components. This means the string, File version and ordered version
+numbers are confusingly different for a CI build. The ordered version number does NOT
+account for CI in any way. It is ONLY able to convert to/from a CSemVer. Thus, a
+CSemVer-CI has an ambiguous conversion. Should it convert the Patch+1 form in a string
+or the base build number?
 
 ### File Version Quad and UINT64
 A file Version quad is a data structure that is blittable as an unsigned 64 bit value.
@@ -153,10 +161,11 @@ Bits 1-63 are the same as the ordered version of the base build for a CI build a
 the same as the ordered version of a release build.
 
 ------
-<sup><a id="footnote_1">1</a></sup> Endianess of the platform does not matter as the bits are numbered as MSB->LSB
-and the actual byte layout is dependent on the target platform even though the bits
-are not. It is NOT safe to transfer a FileVersion (or Ordered version) as in integral
-value without considering the endianess of the source, target and transport mechanism,
-all of which are out of scope for this library and the CSemVer spec in general.
+<sup><a id="footnote_1">1</a></sup> Endianess of the platform does not matter for the
+purposes of discussion or this library, as the bits are numbered as MSB->LSB and the
+actual byte layout is dependent on the target platform even though the bits are not.
+It is NOT safe to transfer a FileVersion (or Ordered version) as in integral value
+without considering the endianess of the source, target and transport mechanism, all
+of which are out of scope for this library and the CSemVer spec in general.
 
 

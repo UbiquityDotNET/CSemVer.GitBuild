@@ -15,6 +15,8 @@ using Microsoft.Build.Evaluation;
 using Microsoft.Build.Utilities.ProjectCreation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using Ubiquity.NET.Versioning.Build.Tasks.UT.Support;
+
 namespace Ubiquity.NET.Versioning.Build.Tasks.UT
 {
     [TestClass]

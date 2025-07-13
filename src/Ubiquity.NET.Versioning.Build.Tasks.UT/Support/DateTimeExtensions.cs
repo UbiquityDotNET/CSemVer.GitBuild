@@ -7,7 +7,7 @@
 using System;
 using System.Globalization;
 
-namespace Ubiquity.NET.Versioning.Build.Tasks.UT
+namespace Ubiquity.NET.Versioning.Build.Tasks.UT.Support
 {
     /// <summary>Utility Class for <see cref="DateTime"/> extensions</summary>
     /// <remarks>

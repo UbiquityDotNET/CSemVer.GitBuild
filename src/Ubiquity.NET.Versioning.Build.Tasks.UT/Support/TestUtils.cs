@@ -11,7 +11,7 @@ using System.IO;
 using Microsoft.Build.Definition;
 using Microsoft.Build.Evaluation;
 
-namespace Ubiquity.NET.Versioning.Build.Tasks.UT
+namespace Ubiquity.NET.Versioning.Build.Tasks.UT.Support
 {
     internal static class TestUtils
     {
