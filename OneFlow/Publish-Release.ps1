@@ -48,10 +48,13 @@ if($PSCmdlet.ShouldProcess($officialReleaseBranch, "git switch -C $releaseBranch
     Invoke-External git switch '-C' $releaseBranch $officialReleaseBranch
 }
 
-if($PSCmdlet.ShouldProcess($tagName, "create annotated tag"))
+if($PSCmdlet.ShouldProcess($tagName, "create signed tag"))
 {
-    Write-Information 'Creating an annotated tag of this branch as the release'
-    Invoke-External git tag $tagName '-m' "Official release: $tagName"
+    Write-Information 'Creating a signed tag of this branch as the release'
+    Invoke-External git tag -s $tagName '-m' "Official release: $tagName"
+
+    Write-Information 'Verifying signature on tag'
+    Invoke-External git tag -v $tagName
 }
 
 if($PSCmdlet.ShouldProcess($tagName, "git push $officialRemoteName tag"))
