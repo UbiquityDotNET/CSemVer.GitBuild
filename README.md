@@ -64,7 +64,7 @@ of the last one released publicly.
 > (NuGet v3 can handle the full name just fine!). Thus, the lack of support in this library.
 
 ## End User Documentation
-Full documentation on the tasks is available in the project's [docs site](https://ubiquitydotnet.github.io/CSemVer.GitBuild/)
+Full documentation on the tasks are available in the project's [docs site](https://ubiquitydotnet.github.io/CSemVer.GitBuild/)
 
 ## Building the tasks
 Documentation on building and general maintenance of this repo are provided in the [Wiki](https://github.com/UbiquityDotNET/CSemVer.GitBuild/wiki).
