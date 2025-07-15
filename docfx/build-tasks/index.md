@@ -49,7 +49,7 @@ components of the version match<sup>[1](#footnote_1)</sup>. This ensures that wh
 the dependent components you just built instead of the last one released publicly.
 
 ### Understanding CI builds
-Understanding CI builds is important and an complete [article](xref:understanding-ci-builds)
+Understanding CI builds is important and an seperate [article](xref:understanding-ci-builds)
 is available on the subject. An important point to understand here is that a CI build
 version number is a POST-RELEASE version that is ordered AFTER the release it is based
 on AND BEFORE the next release. That is a CI build is ordered BETWEEN releases. Though
