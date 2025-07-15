@@ -99,7 +99,7 @@ class PreReleaseVersion
         }
     }
 
-    [string] ToString()
+    [string] ToString($alwaysIncludeZero = $false)
     {
         $hasPreRel = $this.Index -ge 0
 
@@ -108,10 +108,10 @@ class PreReleaseVersion
         {
             $bldr.Append('-').Append( $this.Name)
             $delimFormat = '.{0}'
-            if(($this.Number -gt 0))
+            if(($this.Number -gt 0 -or $alwaysIncludeZero))
             {
                 $bldr.AppendFormat($delimFormat, $this.Number)
-                if(($this.Fix -gt 0))
+                if(($this.Fix -gt 0 -or $alwaysIncludeZero))
                 {
                     $bldr.AppendFormat($delimFormat, $this.Fix)
                 }
@@ -244,11 +244,12 @@ class CSemVer
 
     [string] ToString([bool] $includeMetadata)
     {
+        $isCiBuild = $this.CiBuildIndex -and $this.CiBuildName
         $bldr = [System.Text.StringBuilder]::new()
         $bldr.AppendFormat('{0}.{1}.{2}', $this.Major, $this.Minor, $this.Patch)
         if($this.PreReleaseVersion)
         {
-            $bldr.Append($this.PreReleaseVersion.ToString())
+            $bldr.Append($this.PreReleaseVersion.ToString($isCiBuild))
         }
 
         $hasPreRel = $this.PreReleaseVersion -and $this.PreReleaseVersion.Index -ge 0

@@ -19,9 +19,9 @@
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="17.14.8" />
     <PackageVersion Include="MSBuild.ProjectCreation" Version="14.0.5" />
     <!-- Tests all use the same framework versions -->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
-    <PackageVersion Include="MSTest.TestAdapter" Version="3.9.1" />
-    <PackageVersion Include="MSTest.TestFramework" Version="3.9.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="3.9.3" />
+    <PackageVersion Include="MSTest.TestFramework" Version="3.9.3" />
     <PackageVersion Include="PolySharp" Version="1.15.0" />
     <PackageVersion Include="Sprache" Version="2.3.1" />
     <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
