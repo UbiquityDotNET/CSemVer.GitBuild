@@ -3,6 +3,14 @@
         <_TaskFolder Condition=" '$(MSBuildRuntimeType)' == 'Core' ">tasks\netstandard2.0\</_TaskFolder>
         <_TaskFolder Condition=" '$(MSBuildRuntimeType)' != 'Core' ">tasks\net48\</_TaskFolder>
         <_Ubiquity_NET_Versioning_Build_Tasks>$([MSBuild]::NormalizePath($(MSBuildThisFileDirectory)..\$(_TaskFolder)Ubiquity.NET.Versioning.Build.Tasks.dll))</_Ubiquity_NET_Versioning_Build_Tasks>
+        <!--
+        Force target dependency for tasks that use this package. If a project contains references to another project then
+        the NuGet tasks will call a task that uses this in the referenced project. The actual task is currently
+        `_GetProjectVersion` but that is not formally documented and subject to change. (This property isn't formally
+        documented either but at least it doesn't have the leading underscore to indicate it is intended as private/internal
+        and does have some hits on a search) see: https://github.com/UbiquityDotNET/CSemVer.GitBuild/issues/79
+        -->
+        <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);PrepareVersioningForBuild</GetPackageVersionDependsOn>
     </PropertyGroup>
 
     <!--
@@ -21,7 +29,7 @@
     <UsingTask TaskName="ParseBuildVersionXml" AssemblyFile="$(_Ubiquity_NET_Versioning_Build_Tasks)"/>
 
     <Target Name="PrepareVersioningForBuild"
-            BeforeTargets="PrepareForBuild;_IntermediatePack"
+            BeforeTargets="PrepareForBuild"
             DependsOnTargets="GetRepositoryInfo;VerifyProvidedBuildVersion;SetVersionDependentProperties;"
             />
 

@@ -544,6 +544,36 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT
             }
         }
 
+        [TestMethod]
+        [DataRow("netstandard2.0")]
+        [DataRow("net48")]
+        [DataRow("net8.0")]
+        public void Projects_with_project_references_create_proper_dependencies_in_nuspec( string targetFramework )
+        {
+            // This tests for a fix to https://github.com/UbiquityDotNET/CSemVer.GitBuild/issues/79
+            // Currently this is a bit of a hack to move things along elsewhere.
+            // for now, hack this and specifically look for the solution that is at least known to work at this point.
+            var globalProperties = new Dictionary<string, string>
+            {
+                [PropertyNames.BuildMajor] = "1",
+                [PropertyNames.BuildMinor] = "2",
+                [PropertyNames.BuildPatch] = "3",
+                [PropertyNames.PreReleaseName] = "delta",
+            };
+
+            using var collection = new ProjectCollection(globalProperties);
+            using var fullResults = Context.CreateTestProjectAndInvokeTestedPackage(targetFramework, collection);
+            var prop = fullResults.BuildResults.Creator.Project.GetProperty("GetPackageVersionDependsOn");
+            Assert.IsTrue(prop.EvaluatedValue.Contains("PrepareVersioningForBuild", StringComparison.Ordinal));
+
+            // A full solution would:
+            // Create a project (dependentProj)
+            //     - Should generate a NuGetPackage
+            // Create a project (testProj) that has a project reference for 'dependentProj'
+            // pack testProj
+            // look into generated nupkg to ensure dependency for dependentProj has correct version (and NOT the default 1.0.0)
+        }
+
         private static IEnumerable<PrereleaseTestData> GetPrereleaseTestData()
         {
             return from tfm in TargetFrameworks
