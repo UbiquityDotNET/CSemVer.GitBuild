@@ -108,7 +108,7 @@ class PreReleaseVersion
         {
             $bldr.Append('-').Append( $this.Name)
             $delimFormat = '.{0}'
-            if(($this.Number -gt 0 -or $alwaysIncludeZero))
+            if(($this.Fix -gt 0 -or $alwaysIncludeZero))
             {
                 $bldr.AppendFormat($delimFormat, $this.Number)
                 if(($this.Fix -gt 0 -or $alwaysIncludeZero))
@@ -269,7 +269,7 @@ class CSemVer
 
     [string] ToString()
     {
-        return $this.ToString($true, $false);
+        return $this.ToString($true);
     }
 
     hidden static [ulong] MakePatchPlus1($orderedVersion)
@@ -359,6 +359,21 @@ try
     # a LOT of wasted time chasing down why a change didn't work...
     # [Been there, done that, worn out the bloody T-Shirt...]
     $csemVer = [CSemVer]::New($verInfo)
+
+    #<DIAGNOSTIC>
+    Write-Verbose "CSemVer:"
+    Write-Verbose ($csemVer | Out-String)
+    if($csemVer.PreReleaseVersion)
+    {
+        Write-Verbose "PreRelease:"
+        Write-Verbose ($csemVer.PreReleaseVersion | Out-String)
+    }
+    Write-Verbose "PreReleaseVersion.ToString($true): $($csemVer.PreReleaseVersion.ToString($true))"
+    Write-Verbose "PreReleaseVersion.ToString($false): $($csemVer.PreReleaseVersion.ToString($false))"
+    Write-Verbose "ToString($true): $($csemVer.ToString($true))"
+    Write-Verbose "ToString($false): $($csemVer.ToString($false))"
+    #</DIAGNOSTIC>
+
     $xmlDoc = [System.Xml.XmlDocument]::new()
     $projectElement = $xmlDoc.CreateElement('Project')
     $xmlDoc.AppendChild($projectElement) | Out-Null
