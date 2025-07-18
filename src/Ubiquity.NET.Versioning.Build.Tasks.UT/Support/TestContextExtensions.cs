@@ -171,7 +171,7 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT.Support
 
             if(preReleaseFix.HasValue)
             {
-                element.Add( new XAttribute( PropertyNames.PreReleaseNumber, preReleaseFix.Value ) );
+                element.Add( new XAttribute( PropertyNames.PreReleaseFix, preReleaseFix.Value ) );
             }
 
             element.Save( strm );

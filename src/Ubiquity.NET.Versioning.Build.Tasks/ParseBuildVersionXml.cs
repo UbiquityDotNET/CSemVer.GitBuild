@@ -113,12 +113,6 @@ namespace Ubiquity.NET.Versioning.Build.Tasks
                     PreReleaseFix = "0";
                 }
 
-                if( PreReleaseNumber == "0" && PreReleaseFix != "0")
-                {
-                    Log.LogMessage(MessageImportance.Low, "PreReleaseNumber is 0; forcing PreReleaseFix == 0");
-                    PreReleaseFix = "0";
-                }
-
                 Log.LogMessage(MessageImportance.Low, $"-{nameof(ParseBuildVersionXml)} Task");
                 return true;
             }
