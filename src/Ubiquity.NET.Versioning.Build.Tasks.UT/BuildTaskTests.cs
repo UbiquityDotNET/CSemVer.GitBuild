@@ -107,14 +107,14 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT
         [DataRow("net8.0")]
         public void BuildVersionXmlIsUsed( string targetFramework )
         {
-            string buildVersionXml = Context.CreateBuildVersionXmlWithRandomName(20, 1, 5);
+            string buildVersionXmlPath = Context.CreateBuildVersionXmlWithRandomName(20, 1, 5);
             string buildTime = DateTime.UtcNow.ToString("o");
             const string buildIndex = "ABCDEF12";
             var globalProperties = new Dictionary<string, string>
             {
                 [PropertyNames.BuildTime] = buildTime, // should be ignored as presence of explicit CiBuildIndex overrides it
                 [PropertyNames.CiBuildIndex] = buildIndex,
-                ["BuildVersionXml"] = buildVersionXml
+                ["BuildVersionXml"] = buildVersionXmlPath
             };
 
             using var collection = new ProjectCollection(globalProperties);
@@ -572,6 +572,228 @@ namespace Ubiquity.NET.Versioning.Build.Tasks.UT
             // Create a project (testProj) that has a project reference for 'dependentProj'
             // pack testProj
             // look into generated nupkg to ensure dependency for dependentProj has correct version (and NOT the default 1.0.0)
+        }
+
+        [TestMethod]
+        [DataRow("netstandard2.0")]
+        [DataRow("net48")]
+        [DataRow("net8.0")]
+        public void BuildVersionXmlSupportsPreReleaseName( string targetFramework )
+        {
+            string buildVersionXmlPath = Context.CreateBuildVersionXmlWithRandomName(20, 1, 5, "alpha");
+            string buildTime = DateTime.UtcNow.ToString("o");
+            const string buildIndex = "ABCDEF12";
+            var globalProperties = new Dictionary<string, string>
+            {
+                [PropertyNames.BuildTime] = buildTime, // should be ignored as presence of explicit CiBuildIndex overrides it
+                [PropertyNames.CiBuildIndex] = buildIndex,
+                ["BuildVersionXml"] = buildVersionXmlPath
+            };
+
+            using var collection = new ProjectCollection(globalProperties);
+
+            using var fullResults = Context.CreateTestProjectAndInvokeTestedPackage(targetFramework, collection);
+            var (buildResults, props) = fullResults;
+            Assert.IsTrue(buildResults.Success);
+
+            // v20.1.5-alpha => 5.44854.3878.23340 [see: https://csemver.org/playground/site/#/]
+            // NOTE: CI build is Patch+1 for the string form
+            // and for a FileVersion, it is baseBuild + CI bit.
+            // Non-prerelease double dash.
+            string expectedFullBuildNumber = $"20.1.6-alpha.0.0.ci.ABCDEF12.ZZZ";
+            string expectedFileVersion = "5.44854.3878.23341";
+
+            Assert.IsNotNull(props.BuildMajor);
+            Assert.AreEqual(20u, props.BuildMajor.Value);
+
+            Assert.IsNotNull(props.BuildMinor);
+            Assert.AreEqual(1u, props.BuildMinor.Value);
+
+            Assert.IsNotNull(props.BuildPatch);
+            Assert.AreEqual(5u, props.BuildPatch.Value);
+
+            Assert.IsNotNull(props.PreReleaseName);
+            Assert.AreEqual("alpha", props.PreReleaseName);
+
+            Assert.IsNull(props.PreReleaseNumber);
+            Assert.IsNull(props.PreReleaseFix);
+
+            Assert.AreEqual(expectedFullBuildNumber, props.FullBuildNumber);
+            Assert.AreEqual(expectedFullBuildNumber, props.PackageVersion);
+
+            // Test for expected global properties (Should not change values)
+            Assert.AreEqual(buildTime, props.BuildTime);
+            Assert.AreEqual(buildIndex, props.CiBuildIndex);
+
+            Assert.AreEqual("ZZZ", props.CiBuildName);
+
+            Assert.IsNotNull(props.FileVersionMajor);
+            Assert.AreEqual(5, props.FileVersionMajor.Value);
+
+            Assert.IsNotNull(props.FileVersionMinor);
+            Assert.AreEqual(44854, props.FileVersionMinor.Value);
+
+            Assert.IsNotNull(props.FileVersionBuild);
+            Assert.AreEqual(3878, props.FileVersionBuild.Value);
+
+            Assert.IsNotNull(props.FileVersionRevision);
+
+            // CI Build so patch+1
+            Assert.AreEqual(23341, props.FileVersionRevision.Value);
+
+            Assert.AreEqual(expectedFileVersion, props.FileVersion);
+            Assert.AreEqual(expectedFileVersion, props.AssemblyVersion);
+            Assert.AreEqual(expectedFullBuildNumber, props.InformationalVersion);
+        }
+
+        [TestMethod]
+        [DataRow("netstandard2.0")]
+        [DataRow("net48")]
+        [DataRow("net8.0")]
+        public void BuildVersionXmlSupportsPreReleaseFixWithZeroNumber( string targetFramework )
+        {
+            string buildVersionXmlPath = Context.CreateBuildVersionXmlWithRandomName(20, 1, 5, "alpha", 0, 1);
+            string buildTime = DateTime.UtcNow.ToString("o");
+            const string buildIndex = "ABCDEF12";
+            var globalProperties = new Dictionary<string, string>
+            {
+                [PropertyNames.BuildTime] = buildTime, // should be ignored as presence of explicit CiBuildIndex overrides it
+                [PropertyNames.CiBuildIndex] = buildIndex,
+                ["BuildVersionXml"] = buildVersionXmlPath
+            };
+
+            using var collection = new ProjectCollection(globalProperties);
+
+            using var fullResults = Context.CreateTestProjectAndInvokeTestedPackage(targetFramework, collection);
+            var (buildResults, props) = fullResults;
+            Assert.IsTrue(buildResults.Success);
+
+            // v20.1.5-alpha.0.1 => 5.44854.3878.23342 [see: https://csemver.org/playground/site/#/]
+            // NOTE: CI build is Patch+1 for the string form
+            // and for a FileVersion, it is baseBuild + CI bit.
+            // Non-prerelease double dash.
+            string expectedFullBuildNumber = $"20.1.6-alpha.0.1.ci.ABCDEF12.ZZZ";
+            string expectedFileVersion = "5.44854.3878.23343";
+
+            Assert.IsNotNull(props.BuildMajor);
+            Assert.AreEqual(20u, props.BuildMajor.Value);
+
+            Assert.IsNotNull(props.BuildMinor);
+            Assert.AreEqual(1u, props.BuildMinor.Value);
+
+            Assert.IsNotNull(props.BuildPatch);
+            Assert.AreEqual(5u, props.BuildPatch.Value);
+
+            Assert.IsNotNull(props.PreReleaseName);
+            Assert.AreEqual("alpha", props.PreReleaseName);
+
+            Assert.IsNotNull(props.PreReleaseNumber);
+            Assert.AreEqual(0, props.PreReleaseNumber.Value, "PreReleaseNumber should be what was set");
+
+            Assert.IsNotNull(props.PreReleaseFix);
+            Assert.AreEqual(1, props.PreReleaseFix.Value, "PreReleaseFix should be what was set");
+
+            Assert.AreEqual(expectedFullBuildNumber, props.FullBuildNumber);
+            Assert.AreEqual(expectedFullBuildNumber, props.PackageVersion);
+
+            // Test for expected global properties (Should not change values)
+            Assert.AreEqual(buildTime, props.BuildTime);
+            Assert.AreEqual(buildIndex, props.CiBuildIndex);
+
+            Assert.AreEqual("ZZZ", props.CiBuildName);
+
+            Assert.IsNotNull(props.FileVersionMajor);
+            Assert.AreEqual(5, props.FileVersionMajor.Value);
+
+            Assert.IsNotNull(props.FileVersionMinor);
+            Assert.AreEqual(44854, props.FileVersionMinor.Value);
+
+            Assert.IsNotNull(props.FileVersionBuild);
+            Assert.AreEqual(3878, props.FileVersionBuild.Value);
+
+            Assert.IsNotNull(props.FileVersionRevision);
+
+            // CI Build so patch+1
+            Assert.AreEqual(23343, props.FileVersionRevision.Value);
+
+            Assert.AreEqual(expectedFileVersion, props.FileVersion);
+            Assert.AreEqual(expectedFileVersion, props.AssemblyVersion);
+            Assert.AreEqual(expectedFullBuildNumber, props.InformationalVersion);
+        }
+
+        [TestMethod]
+        [DataRow("netstandard2.0")]
+        [DataRow("net48")]
+        [DataRow("net8.0")]
+        public void BuildVersionXmlSupportsPreReleaseFixWithZeroNumberRelease( string targetFramework )
+        {
+            string buildVersionXmlPath = Context.CreateBuildVersionXmlWithRandomName(20, 1, 8, "alpha", 0, 1);
+            var globalProperties = new Dictionary<string, string>
+            {
+                ["BuildVersionXml"] = buildVersionXmlPath,
+
+                // ensure generation is based on the test input and does NOT create
+                // a CI build version if it isn't supposed to.
+                [EnvVarNames.IsReleaseBuild] = "true"
+            };
+
+            using var collection = new ProjectCollection(globalProperties);
+
+            using var fullResults = Context.CreateTestProjectAndInvokeTestedPackage(targetFramework, collection);
+            var (buildResults, props) = fullResults;
+            Assert.IsTrue(buildResults.Success);
+
+            // v20.1.8-alpha.0.1 => 5.44854.3885.44596 [see: https://csemver.org/playground/site/#/]
+            // NOTE: CI build is Patch+1 for the string form
+            // and for a FileVersion, it is baseBuild + CI bit.
+            // Non-prerelease double dash.
+            string expectedFullBuildNumber = $"20.1.8-alpha.0.1";
+            string expectedFileVersion = "5.44854.3885.44596";
+
+            Assert.IsNotNull(props.BuildMajor);
+            Assert.AreEqual(20u, props.BuildMajor.Value);
+
+            Assert.IsNotNull(props.BuildMinor);
+            Assert.AreEqual(1u, props.BuildMinor.Value);
+
+            Assert.IsNotNull(props.BuildPatch);
+            Assert.AreEqual(8u, props.BuildPatch.Value);
+
+            Assert.IsNotNull(props.PreReleaseName);
+            Assert.AreEqual("alpha", props.PreReleaseName);
+
+            Assert.IsNotNull(props.PreReleaseNumber);
+            Assert.AreEqual(0, props.PreReleaseNumber.Value, "PreReleaseNumber should be what was set");
+
+            Assert.IsNotNull(props.PreReleaseFix);
+
+            Assert.AreEqual(1, props.PreReleaseFix.Value, "PreReleaseFix should be what was set");
+            Assert.AreEqual(expectedFullBuildNumber, props.FullBuildNumber);
+            Assert.AreEqual(expectedFullBuildNumber, props.PackageVersion);
+
+            // Props file will set these based on runtime context, but then they are not used.
+            //Assert.AreEqual(buildTime, props.BuildTime);
+            //Assert.AreEqual(buildIndex, props.CiBuildIndex);
+
+            Assert.AreEqual(string.Empty, props.CiBuildName, "Release builds should not have CI information");
+
+            Assert.IsNotNull(props.FileVersionMajor);
+            Assert.AreEqual(5, props.FileVersionMajor.Value);
+
+            Assert.IsNotNull(props.FileVersionMinor);
+            Assert.AreEqual(44854, props.FileVersionMinor.Value);
+
+            Assert.IsNotNull(props.FileVersionBuild);
+            Assert.AreEqual(3885, props.FileVersionBuild.Value);
+
+            Assert.IsNotNull(props.FileVersionRevision);
+
+            // NOT a CI Build so NOT patch+1
+            Assert.AreEqual(44596, props.FileVersionRevision.Value);
+
+            Assert.AreEqual(expectedFileVersion, props.FileVersion);
+            Assert.AreEqual(expectedFileVersion, props.AssemblyVersion);
+            Assert.AreEqual(expectedFullBuildNumber, props.InformationalVersion);
         }
 
         private static IEnumerable<PrereleaseTestData> GetPrereleaseTestData()
