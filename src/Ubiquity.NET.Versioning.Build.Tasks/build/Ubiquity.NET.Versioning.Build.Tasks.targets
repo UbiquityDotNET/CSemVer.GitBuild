@@ -114,6 +114,7 @@
             <VersionInfoGeneratedLine Include='#define PRODUCT_VERSION_BUILD $(FileVersionBuild)'/>
             <VersionInfoGeneratedLine Include='#define PRODUCT_VERSION_REVISION $(FileVersionRevision)'/>
             <VersionInfoGeneratedLine Include='#define PRODUCT_VERSION_STRING "$(FileVersion)"'/>
+            <VersionInfoGeneratedLine Include='#define FULL_BUILD_NUMBER_STRING "$(FullBuildNumber)"'/>
         </ItemGroup>
         <Message Importance="high" Text="Generating $(GeneratedVersionInfoHeader)" />
         <WriteLinesToFile File="$(IntermediateOutputPath)$(GeneratedVersionInfoHeader)" Overwrite="true" Lines="@(VersionInfoGeneratedLine)" />
