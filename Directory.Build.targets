@@ -1,6 +1,6 @@
-<Project InitialTargets="VerifyProjectSettings;ShowBuildParameters">
-    <Target Name="EnsureBuildOutputPaths" Condition="!EXISTS($(PackageOutputPath))" BeforeTargets="Build;Restore">
-        <MakeDir Directories="$(PackageOutputPath)"/>
+<Project InitialTargets="VerifyProjectSettings;ShowBuildParameters;EnsureBuildOutputPaths">
+    <Target Name="EnsureBuildOutputPaths">
+        <MakeDir Condition="!EXISTS($(PackageOutputPath))" Directories="$(PackageOutputPath)"/>
     </Target>
 
     <Target Name="ShowBuildParameters">
@@ -41,6 +41,6 @@
         <Error Condition="'$(ImplicitUsings)'!='disable'" Code="REPO001" Text="$(MSBuildProjectFile) - Projects in this repository MUST NOT have ImplicitUsings enabled!"/>
 
         <!--Verify that GeneratedVersion.props exists; and produce a, hopefully, informative message on how to create it if it doesn't -->
-        <Error Condition="!Exists('$(GeneratedVersionProps)')" Code="REPO002" Text="$(GeneratedVersionProps) file does not exist, it must be created by `New-GeneratedBersionProps.ps1` BEFORE building in the IDE for consistent results"/>
+        <Error Condition="!Exists('$(GeneratedVersionProps)')" Code="REPO002" Text="$(GeneratedVersionProps) file does not exist, it must be created by `New-GeneratedVersionProps.ps1` BEFORE building in the IDE for consistent results"/>
     </Target>
 </Project>
