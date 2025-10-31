@@ -8,6 +8,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 // In SDK-style projects such as this one, several assembly attributes that were historically
 // defined in this file are now automatically added during build and populated with
 // values defined in project properties. For details of which attributes are included
@@ -25,3 +27,10 @@ using System.Runtime.InteropServices;
 
 // Code coverage should not apply to a unit test assembly
 [assembly: ExcludeFromCodeCoverage]
+
+// parallelization causes problems with concurrent builds
+// so it must be disabled. Total test time is still ~15s
+// for the first (No JIT caching of hot path). There is
+// probably a way to resolve this and allow parallel builds
+// or tests but it doesn't currently seem worth it to investigate...
+[assembly: DoNotParallelize]
