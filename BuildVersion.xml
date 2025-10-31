@@ -16,7 +16,4 @@ PreReleaseFix
     BuildMajor = "5"
     BuildMinor = "0"
     BuildPatch = "7"
-    PreReleaseName ="alpha"
-    PreReleaseNumber ="0"
-    PreReleaseFix ="1"
 />
