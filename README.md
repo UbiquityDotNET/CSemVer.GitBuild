@@ -15,15 +15,6 @@ This repo includes support for versioning numbers. This support includes:
 ![PR/CI Work Flow Status](https://img.shields.io/github/actions/workflow/status/UbiquityDotNET/CSemVer.GitBuild/pr-build.yml?label=PR%2FCI%20Build%20Status)
 ![Release Work Flow Status](https://img.shields.io/github/actions/workflow/status/UbiquityDotNET/CSemVer.GitBuild/release-build.yml?label=Release%20Build%20Status)
 
->[!IMPORTANT]
-> Version 5.0.4 and earlier have a [known bug](https://github.com/UbiquityDotNET/CSemVer.GitBuild/issues/72)
-> where they do not handle CI versioning correctly. CI builds should ALWAYS show the pre-release number and fix
-> values (even if 0). This is different behavior from how these are treated for a CSemVer. Work is pending to
-> resolve this and this message will be removed as part of any such fix.
->
-> This issue is resolved with v5.0.6-alpha. Once that is formally released (past prerelease stage) this entire
-> notice should be removed.
-
 ## Overview
 Officially, NuGet Packages use a SemVer 2.0 (see http://semver.org).
 However, SemVer 2.0 doesn't consider or account for publicly available CI builds.
